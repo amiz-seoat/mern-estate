@@ -35,7 +35,7 @@
       }
     
       try {
-        const fileId = `unique()`; // Generates a unique ID
+        const fileId = `unique()`; // Generates a unique Id
         const response = await storage.createFile("67fcceb30033ff389be2", fileId, file);
         console.log("Upload successful:", response);
 
