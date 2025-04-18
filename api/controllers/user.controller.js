@@ -2,11 +2,11 @@ import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 import bcryptjs from 'bcryptjs'
 
-const test = (req, res)=>{
+ export const test = (req, res)=>{
     res.json({
         message:'Hello world!',
     }) 
-}
+};
 
 export const updateUser =async (req,res,next)=>{
   if(req.user.id!== req.params.id) return next (errorHandler(401, "you can only update your own account"))
@@ -33,4 +33,4 @@ export const updateUser =async (req,res,next)=>{
     }
 }
 
-export default test;
+

@@ -24,7 +24,8 @@ export default function SignIn() {
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Fixed typo 'applicaion/json' → 'application/json'
+          'Content-Type': 'application/json', 
+          // Fixed typo 'applicaion/json' → 'application/json'
         },
         body: JSON.stringify(formData),
       });
