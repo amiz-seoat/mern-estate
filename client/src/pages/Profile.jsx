@@ -6,6 +6,7 @@
   import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart, signOutUserFailure, signOutUserSuccess } from "../redux/user/userSlice.js";
   import { useDispatch } from "react-redux";
   import {ID} from "appwrite";
+  import {Link} from 'react-router-dom'
 
   export default function Profile() {
     const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -166,9 +167,7 @@
             <button disabled={loading} className="bg-slate-800 p-2.5 text-amber-50 uppercase rounded-lg hover:opacity-95 disabled:opacity-80">
               {loading? 'Loading...':'Update'}
             </button>
-            <button className="bg-green-600 p-2.5 text-amber-50 uppercase rounded-lg  hover:opacity-95 disabled:opacity-80">
-              create listing
-            </button>
+            <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95' to={"/create-listing"}>Create Listing</Link>
           </form>
           <div className="flex justify-between mt-4 ">
             <span onClick={handleDeleteUser} className="text-red-800 cursor-pointer">Delete account</span>
