@@ -3,7 +3,7 @@
   import { useRef } from "react";
   import { account, storage } from "../appwrite/appwriteconfig.js";
   //import { Await } from "react-router-dom";
-  import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess } from "../redux/user/userSlice.js";
+  import { updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserStart, deleteUserSuccess, signOutUserStart, signOutUserFailure, signOutUserSuccess } from "../redux/user/userSlice.js";
   import { useDispatch } from "react-redux";
   import {ID} from "appwrite";
 
@@ -102,6 +102,21 @@
     }
   }
 
+  const handleSignOut = async()=>{
+     try {
+      dispatch(signOutUserStart())
+       const res = await fetch('/api/auth/signout')
+       const data = await res.json()
+       if (data.success === false){
+        dispatch(signOutUserFailure(data.message))
+        return;
+       }
+       dispatch(signOutUserSuccess(data))
+     } catch (error) {
+       dispatch(signOutUserFailure(data.message))
+     }
+  }
+
     return (
       <div>
         <div className="max-w-lg mx-auto p-3 mY-7">
@@ -157,7 +172,7 @@
           </form>
           <div className="flex justify-between mt-4 ">
             <span onClick={handleDeleteUser} className="text-red-800 cursor-pointer">Delete account</span>
-            <span className="text-red-800 cursor-pointer">Sign out</span>
+            <span onClick={handleSignOut} className="text-red-800 cursor-pointer">Sign out</span>
           </div>
           <p className="text-red-700 mt-5">{error ? error:''}</p>
           <p className="text-green-700 mt-5">{updateSuccess? 'user is updated successfully': ''}</p>
