@@ -29,7 +29,7 @@ export default function Profile() {
   const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
 
-  console.log(file);
+  if (file) console.log(file);
 
   useEffect(() => {
     if (file) {
