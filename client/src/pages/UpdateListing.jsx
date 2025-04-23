@@ -42,7 +42,7 @@ export default function CreateListing() {
             setFormData(data);
         }
         fetchListing();
-  })
+  },[])
   
   const handleImageSubmit = async (e) => {
     e.preventDefault();
