@@ -64,7 +64,7 @@ export default function CreateListing() {
         setImageUploadError("Image upload failed, (2 MB) MAX per image");
       }
     } else {
-      console.error("please upload between 1 and 6 image.");
+      console.log.error("please upload between 1 and 6 image.");
       setImageUploadError(
         "You can upload a minimum of 1 and maximum of 6 images."
       );
