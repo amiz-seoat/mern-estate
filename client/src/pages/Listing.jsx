@@ -68,8 +68,8 @@ export default function Listing() {
             <h1 className="text-xl font-semibold text-gray-800">
               {listing.name} {" - $"}
               {listing.offer
-                ? +listing.regularPrice - listing.discountPrice
-                : listing.regularPrice}
+                &&  (+listing.regularPrice - +listing.discountPrice
+                 )}
               /month
             </h1>
             <p className="mt-5 text-md text-gray-600 flex">
