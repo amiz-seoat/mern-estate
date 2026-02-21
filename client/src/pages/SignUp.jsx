@@ -17,25 +17,28 @@ export default function SignUp() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (!formData.username || !formData.email || !formData.password) {
+      return setError('All fields are required');
+    }
+
     try {
       setLoading(true);
+      setError(null);
       const res = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Fixed typo 'applicaion/json' → 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
-      const text = await res.text();
-      const data = text ? JSON.parse(text) : {}; // Prevent empty JSON error
-  
-       
+      const data = await res.json();
 
-       
       if (data.success === false) {
-        setError(data.message);
         setLoading(false);
+        setError(data.message);
         return;
       }
 

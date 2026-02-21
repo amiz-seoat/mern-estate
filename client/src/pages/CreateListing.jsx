@@ -28,7 +28,7 @@ export default function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
+
   const handleImageSubmit = async (e) => {
     e.preventDefault();
     setUploading(true);
@@ -78,7 +78,7 @@ export default function CreateListing() {
     }
   };
 
-  console.log("the data...", formData);
+
 
   const handleRemoveImage = (index) => {
     setFormData({
@@ -118,43 +118,42 @@ export default function CreateListing() {
   };
 
   const handleSubmit = async (e) => {
-  if (formData.imageUrls.length < 1)
-    return setError("You must upload at least one image");
-  if (+formData.regularPrice < +formData.discountPrice)
-    return setError("Discount price must be lower than regular price");
+    e.preventDefault();
+    if (formData.imageUrls.length < 1)
+      return setError("You must upload at least one image");
+    if (+formData.regularPrice < +formData.discountPrice)
+      return setError("Discount price must be lower than regular price");
 
-  e.preventDefault();
-  try {
-    setLoading(true);
-    setError(false);
+    try {
+      setLoading(true);
+      setError(false);
 
-    // assuming your currentUser has a `token` field (from login)
-    const res = await fetch("/api/listing/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${currentUser.token}`, // 👈 attach token
-      },
-      body: JSON.stringify({
-        ...formData,
-        userRef: currentUser._id,
-      }),
-    });
+      const res = await fetch("/api/listing/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // ← sends the httpOnly cookie automatically
+        body: JSON.stringify({
+          ...formData,
+          userRef: currentUser._id,
+        }),
+      });
 
-    const data = await res.json();
-    setLoading(false);
+      const data = await res.json();
+      setLoading(false);
 
-    if (data.success === false) {
-      setError(data.message || "Something went wrong.");
-      return;
+      if (data.success === false) {
+        setError(data.message || "Something went wrong.");
+        return;
+      }
+
+      navigate(`/listing/${data._id}`);
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
     }
-
-    navigate(`/listing/${data._id}`);
-  } catch (error) {
-    setError(error.message);
-    setLoading(false);
-  }
-};
+  };
 
 
   return (
@@ -362,7 +361,7 @@ export default function CreateListing() {
             </div>
           ))}
 
-                  <button disabled={loading || uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+          <button disabled={loading || uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
             {loading ? "Creating..." : "Create Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}

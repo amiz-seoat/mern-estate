@@ -3,17 +3,15 @@ import jwt from "jsonwebtoken";
 import { errorHandler } from "./error.js";
 
 export const verifyToken = (req, res, next) => {
-  const authHeader = req.headers.authorization;
+  const token = req.cookies.access_token;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(errorHandler(401, "Access denied. No token provided."));
+  if (!token) {
+    return next(errorHandler(401, "Access denied. Please sign in."));
   }
-
-  const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; // { id: ..., email: ..., etc. }
+    req.user = decoded;
     next();
   } catch (err) {
     return next(errorHandler(403, "Invalid or expired token."));

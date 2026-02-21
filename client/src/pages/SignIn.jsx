@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import {useDispatch, useSelector} from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
 import OAuth from '../components/OAuth';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state)=> state.user)
+  const { loading, error } = useSelector((state) => state.user)
   const navigate = useNavigate();
   const dispatch = useDispatch()
 
@@ -19,32 +19,33 @@ export default function SignIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Client-side validation
+    if (!formData.email || !formData.password) {
+      return dispatch(signInFailure('Email and password are required'));
+    }
+
     try {
-      dispatch(signInStart())
+      dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', 
-          // Fixed typo 'applicaion/json' → 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(formData),
       });
 
-      const text = await res.text();
-      const data = text ? JSON.parse(text) : {}; // Prevent empty JSON error
-  
-       
+      const data = await res.json();
 
-       
       if (data.success === false) {
-        dispatch(signInFailure(data.message))
+        dispatch(signInFailure(data.message));
         return;
       }
 
-      dispatch(signInSuccess(data))
+      dispatch(signInSuccess(data));
       navigate('/');
     } catch (error) {
-      dispatch(signInFailure(error.message))
+      dispatch(signInFailure(error.message));
     }
   };
 
@@ -52,7 +53,7 @@ export default function SignIn() {
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
       <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
- 
+
         <input
           type="email"
           placeholder='Email'
@@ -73,7 +74,7 @@ export default function SignIn() {
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
-        <OAuth/>
+        <OAuth />
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Don't have an account?</p>
