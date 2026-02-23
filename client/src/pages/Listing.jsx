@@ -47,7 +47,12 @@ export default function Listing() {
   }, [params.listingId]);
 
   if (loading) return <p className="text-center my-7 text-2xl">Loading...</p>;
-  if (error) return <p className="text-center my-7 text-2xl text-red-600">Something went wrong.</p>;
+  if (error)
+    return (
+      <p className="text-center my-7 text-2xl text-red-600">
+        Something went wrong.
+      </p>
+    );
 
   return (
     <main>
@@ -67,9 +72,7 @@ export default function Listing() {
           <div className="bg-white shadow-md shadow-amber-600 rounded-lg items-center mx-auto max-w-2xl p-4 mt-8">
             <h1 className="text-xl font-semibold text-gray-800">
               {listing.name} {" - $"}
-              {listing.offer
-                &&  (+listing.regularPrice - +listing.discountPrice
-                 )}
+              {listing.offer && +listing.regularPrice - +listing.discountPrice}
               /month
             </h1>
             <p className="mt-5 text-md text-gray-600 flex">
@@ -105,6 +108,12 @@ export default function Listing() {
               <span className="text-black font-semibold">Description :- </span>
               {listing.description}
             </p>
+            {listing.contact && (
+              <p className="mt-3 text-gray-700 max-w-2xl mx-auto text-center text-sm sm:text-base">
+                <span className="text-black font-semibold">Contact :- </span>
+                {listing.contact}
+              </p>
+            )}
 
             <ul className="mt-6 justify-center text-green-700 font-semibold text-sm sm:text-base flex gap-x-6 gap-y-3 items-center sm:gap-8 flex-wrap">
               <li className="flex items-center gap-2 whitespace-nowrap">
@@ -144,3 +153,4 @@ export default function Listing() {
     </main>
   );
 }
+

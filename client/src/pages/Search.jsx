@@ -12,7 +12,7 @@ export default function Search() {
     parking: false,
     furnished: false,
     offer: false,
-    sort: "created_at",
+    sort: "createdAt",
     order: "desc",
   });
 
@@ -30,7 +30,7 @@ export default function Search() {
       parking: urlParams.get("parking") === "true",
       furnished: urlParams.get("furnished") === "true",
       offer: urlParams.get("offer") === "true",
-      sort: urlParams.get("sort") || "created_at",
+      sort: urlParams.get("sort") || "createdAt",
       order: urlParams.get("order") || "desc",
     };
     setFilters(updatedFilters);
@@ -65,16 +65,17 @@ export default function Search() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const typeParam = filters.type === "all" ? "false" : filters.type;
     const params = new URLSearchParams({
       searchTerm: filters.searchTerm,
-      type: filters.type,
+      type: typeParam,
       parking: filters.parking,
       furnished: filters.furnished,
       offer: filters.offer,
       sort: filters.sort,
       order: filters.order,
     });
-    navigate(`search?${params}`);
+    navigate(`/search?${params}`);
   };
 
   const handleShowMore = () => {
@@ -90,7 +91,9 @@ export default function Search() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* Search term */}
           <div className="flex items-center gap-2">
-            <label className="whitespace-nowrap font-semibold">Search Term</label>
+            <label className="whitespace-nowrap font-semibold">
+              Search Term
+            </label>
             <input
               type="text"
               id="searchTerm"
@@ -164,8 +167,8 @@ export default function Search() {
             >
               <option value="regularPrice_desc">Price high to low</option>
               <option value="regularPrice_asc">Price low to high</option>
-              <option value="created_at_desc">Latest</option>
-              <option value="created_at_asc">Oldest</option>
+              <option value="createdAt_desc">Latest</option>
+              <option value="createdAt_asc">Oldest</option>
             </select>
           </div>
 
@@ -201,3 +204,5 @@ export default function Search() {
     </div>
   );
 }
+
+

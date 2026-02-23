@@ -22,6 +22,7 @@ export default function CreateListing() {
     offer: false,
     parking: false,
     furnished: false,
+    contact: "",
   });
   const [uploading, setUploading] = useState(false);
 
@@ -29,21 +30,21 @@ export default function CreateListing() {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  
-    useEffect(() => {
-        const fetchListing = async () => {
-        const listingId = params.listingId
-            const res = await fetch(`/api/listing/get/${listingId}`)
-            const data = await res.json()
-            if (data.success === false) {
-                console.log(data.message)
-                return;
-            }
-            setFormData(data);
-        }
-        fetchListing();
-  },[])
-  
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listingId = params.listingId;
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        return;
+      }
+      setFormData(data);
+    };
+    fetchListing();
+  }, []);
+
   const handleImageSubmit = async (e) => {
     e.preventDefault();
     setUploading(true);
@@ -66,7 +67,7 @@ export default function CreateListing() {
     } else {
       console.log.error("please upload between 1 and 6 image.");
       setImageUploadError(
-        "You can upload a minimum of 1 and maximum of 6 images."
+        "You can upload a minimum of 1 and maximum of 6 images.",
       );
       setUploading(false);
     }
@@ -78,12 +79,12 @@ export default function CreateListing() {
       const response = await storage.createFile(
         "67fcceb30033ff389be2",
         fileId,
-        file
+        file,
       );
 
       const imageUrl = storage.getFileView(
         "67fcceb30033ff389be2",
-        response.$id
+        response.$id,
       );
 
       console.log("Image URL:", imageUrl);
@@ -142,7 +143,7 @@ export default function CreateListing() {
     try {
       setLoading(true);
       setError(false);
-      const res = await fetch( `/api/listing/update/${params.listingId}`, {
+      const res = await fetch(`/api/listing/update/${params.listingId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -156,9 +157,9 @@ export default function CreateListing() {
       setLoading(false);
       if (data.success === false) {
         setError(data.message || "Something went wrong.");
-        }
-     
-     navigate(`/listing/${data._id}`)
+      }
+
+      navigate(`/listing/${data._id}`);
     } catch (error) {
       setError(error.message);
       setLoading(false);
@@ -200,6 +201,15 @@ export default function CreateListing() {
             required
             onChange={handleChange}
             value={formData.address}
+          />
+          <input
+            type="text"
+            placeholder="Contact (phone, email, Instagram, Telegram)"
+            className="border p-3 rounded-lg"
+            id="contact"
+            maxLength="120"
+            onChange={handleChange}
+            value={formData.contact}
           />
 
           <div className="flex gap-6 flex-wrap">
@@ -288,8 +298,7 @@ export default function CreateListing() {
               <input
                 type="number"
                 id="regularPrice"
-                min="50"
-                max="1000000"
+                min="0"
                 required
                 className="p-3 border border-gray-300 rounded-lg"
                 onChange={handleChange}
@@ -297,7 +306,9 @@ export default function CreateListing() {
               />
               <div className="flex flex-col items-center">
                 <p>Regular price</p>
-                <span className="text-xs">($ / month)</span>
+                <span className="text-xs">
+                  {formData.type === "rent" ? "($ / month)" : "($ total)"}
+                </span>
               </div>
             </div>
             {formData.offer && (
@@ -306,7 +317,6 @@ export default function CreateListing() {
                   type="number"
                   id="discountPrice"
                   min="0"
-                  max="10000"
                   required
                   className="p-3 border border-gray-300 rounded-lg"
                   onChange={handleChange}
@@ -314,7 +324,9 @@ export default function CreateListing() {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted price</p>
-                  <span className="text-xs">($ / month)</span>
+                  <span className="text-xs">
+                    {formData.type === "rent" ? "($ / month)" : "($ total)"}
+                  </span>
                 </div>
               </div>
             )}
@@ -370,7 +382,10 @@ export default function CreateListing() {
             </div>
           ))}
 
-                  <button disabled={loading || uploading} className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
+          >
             {loading ? "Updating..." : "Update Listing"}
           </button>
           {error && <p className="text-red-700 text-sm">{error}</p>}
