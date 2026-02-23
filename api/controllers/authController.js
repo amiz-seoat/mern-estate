@@ -13,7 +13,13 @@ export const signup = async (req, res, next) => {
     }
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
-    const newUser = new User({ username, email, password: hashedPassword });
+    const isAdmin = email === "abduselammiz78@gmail.com";
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      isAdmin,
+    });
 
     await newUser.save();
     res.status(201).json("User created successfully!");
@@ -41,12 +47,21 @@ export const signin = async (req, res, next) => {
     const validUser = await User.findOne({ email });
     if (!validUser) return next(errorHandler(404, "User not found!"));
 
+    if (email === "abduselammiz78@gmail.com" && !validUser.isAdmin) {
+      validUser.isAdmin = true;
+      await validUser.save();
+    }
+
     const validPassword = bcryptjs.compareSync(password, validUser.password);
     if (!validPassword) return next(errorHandler(401, "Wrong credentials!"));
 
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: validUser._id, isAdmin: validUser.isAdmin },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
 
     const { password: pass, ...rest } = validUser._doc;
 
@@ -77,11 +92,18 @@ export const google = async (req, res, next) => {
         (!user.avatar || user.avatar === "" || user.avatar === defaultAvatar)
       ) {
         user.avatar = photo;
-        await user.save();
       }
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "7d",
-      });
+      if (email === "abduselammiz78@gmail.com" && !user.isAdmin) {
+        user.isAdmin = true;
+      }
+      await user.save();
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        },
+      );
       const { password, ...rest } = user._doc;
       return res
         .cookie("access_token", token, { httpOnly: true })
@@ -100,18 +122,24 @@ export const google = async (req, res, next) => {
         Math.random().toString(36).slice(-4)
       : "user" + Math.random().toString(36).slice(-6);
 
+    const isAdmin = email === "abduselammiz78@gmail.com";
     const newUser = new User({
       username,
       email,
       password: hashedPassword,
       avatar: photo || undefined,
+      isAdmin,
     });
 
     await newUser.save();
 
-    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: "7d",
-    });
+    const token = jwt.sign(
+      { id: newUser._id, isAdmin: newUser.isAdmin },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
     const { password: pass, ...rest } = newUser._doc;
 
     res

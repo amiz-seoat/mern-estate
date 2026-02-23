@@ -17,3 +17,10 @@ export const verifyToken = (req, res, next) => {
     return next(errorHandler(403, "Invalid or expired token."));
   }
 };
+
+export const verifyAdmin = (req, res, next) => {
+  if (!req.user || !req.user.isAdmin) {
+    return next(errorHandler(403, "Admin access required."));
+  }
+  next();
+};
