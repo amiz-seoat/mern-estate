@@ -1,6 +1,65 @@
 @import "tailwindcss";
 
-body{
-    background-color: rgb(241,245,241)
+@theme {
+  --color-estate-50: #f0f5ff;
+  --color-estate-100: #dce8f5;
+  --color-estate-200: #b4cce0;
+  --color-estate-300: #8aafca;
+  --color-estate-400: #5e8fb3;
+  --color-estate-500: #3d7099;
+  --color-estate-600: #2b5780;
+  --color-estate-700: #1f4268;
+  --color-estate-800: #163152;
+  --color-estate-900: #0e2240;
+  --color-estate-950: #071530;
+
+  --color-gold-300: #f5d980;
+  --color-gold-400: #f0c040;
+  --color-gold-500: #d4a017;
+  --color-gold-600: #b8860b;
+
+  --animate-fade-in-up: fade-in-up 0.6s ease-out both;
+  --animate-fade-in: fade-in 0.4s ease-out both;
 }
 
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+body {
+  background-color: #f8fafc;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: white !important;
+  background: rgba(0, 0, 0, 0.3);
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 18px !important;
+  font-weight: bold;
+}

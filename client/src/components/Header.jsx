@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FaSearch } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { FaSearch, FaHome, FaBars, FaTimes } from "react-icons/fa";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
   const [searchTerm, setSearchTerm] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,6 +16,7 @@ export default function Header() {
     urlParams.set("searchTerm", searchTerm);
     const searchQuery = urlParams.toString();
     navigate(`search?${searchQuery}`);
+    setMenuOpen(false);
   };
 
   useEffect(() => {
@@ -24,62 +27,153 @@ export default function Header() {
     }
   }, [location.search]);
 
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  const navLinks = [
+    { to: "/", label: "Home" },
+    { to: "/about", label: "About" },
+    ...(currentUser?.isAdmin ? [{ to: "/admin", label: "Admin" }] : []),
+  ];
+
   return (
-    <header className="bg-slate-200 shadow-md">
-      <div className="flex justify-between items-center mx-auto max-w-6xl p-3">
-        <Link to="/">
-          <h1 className="font-bold text-sm sm:text-xl flex flex-wrap">
-            <span className="text-slate-500">Amiz</span>
-            <span className="text-slate-700">Estate</span>
-          </h1>
+    <header className="bg-white/95 backdrop-blur-md shadow-sm border-b border-slate-100 sticky top-0 z-50">
+      <div className="flex justify-between items-center mx-auto max-w-6xl px-4 sm:px-6 h-16">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <div className="bg-estate-800 p-1.5 rounded-lg">
+            <FaHome className="h-4 w-4 text-gold-400" aria-hidden="true" />
+          </div>
+          <span className="font-bold text-lg tracking-tight">
+            <span className="text-estate-800">Amiz</span>
+            <span className="text-estate-500">Estate</span>
+          </span>
         </Link>
+
+        {/* Desktop Search */}
         <form
           onSubmit={handleSubmit}
-          className="bg-slate-100 p-3  rounded-lg flex items-center "
+          className="hidden sm:flex items-center bg-slate-50 rounded-xl px-4 py-2 w-64 lg:w-80 border border-slate-200 focus-within:border-estate-300 focus-within:bg-white focus-within:shadow-sm transition-all duration-200"
+          role="search"
         >
+          <FaSearch
+            className="text-slate-400 h-3.5 w-3.5 shrink-0"
+            aria-hidden="true"
+          />
           <input
             type="text"
-            placeholder="Search...."
-            className=" bg-transparent focus:outline-none w-24 sm:w-64"
+            placeholder="Search properties..."
+            className="bg-transparent focus:outline-none ml-3 w-full text-sm text-slate-700 placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search properties"
           />
-          <button>
-            <FaSearch className="text-slate-600" />
-          </button>
         </form>
 
-        <ul className="flex gap-4">
-          <Link to="/">
-            <li className="hidden sm:inline text-slate-700 hover:underline">
-              Home
-            </li>
-          </Link>
-          <Link to="/about">
-            <li className="hidden sm:inline text-slate-700 hover:underline">
-              About
-            </li>
-          </Link>
-          {currentUser?.isAdmin && (
-            <Link to="/admin">
-              <li className="hidden sm:inline text-slate-700 hover:underline">
-                Admin
-              </li>
+        {/* Desktop Nav */}
+        <nav
+          className="hidden sm:flex items-center gap-1"
+          aria-label="Main navigation"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                location.pathname === link.to
+                  ? "text-estate-800 bg-estate-50"
+                  : "text-slate-600 hover:text-estate-700 hover:bg-slate-50"
+              }`}
+            >
+              {link.label}
             </Link>
-          )}
-          <Link to="/profile">
+          ))}
+          <Link to="/profile" className="ml-2">
             {currentUser ? (
               <img
-                className="rounded-full h-7 w-7 object-cover"
+                className="rounded-full h-8 w-8 object-cover ring-2 ring-estate-100 hover:ring-estate-300 transition-all"
                 src={currentUser.avatar}
-                alt="profile"
+                alt="Your profile"
               />
             ) : (
-              <li className="text-slate-700 hover:underline">Sign in</li>
+              <span className="px-4 py-2 rounded-xl text-sm font-semibold bg-estate-800 text-white hover:bg-estate-700 transition-colors inline-block">
+                Sign in
+              </span>
             )}
           </Link>
-        </ul>
+        </nav>
+
+        {/* Mobile: profile + hamburger */}
+        <div className="sm:hidden flex items-center gap-3">
+          <Link to="/profile" aria-label="Profile">
+            {currentUser ? (
+              <img
+                className="rounded-full h-8 w-8 object-cover ring-2 ring-estate-100"
+                src={currentUser.avatar}
+                alt="Your profile"
+              />
+            ) : (
+              <span className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-estate-800 text-white">
+                Sign in
+              </span>
+            )}
+          </Link>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? (
+              <FaTimes className="h-5 w-5" />
+            ) : (
+              <FaBars className="h-5 w-5" />
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="sm:hidden border-t border-slate-100 bg-white animate-fade-in">
+          <div className="px-4 py-3 space-y-3">
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center bg-slate-50 rounded-xl px-4 py-2.5 border border-slate-200"
+              role="search"
+            >
+              <FaSearch
+                className="text-slate-400 h-3.5 w-3.5 shrink-0"
+                aria-hidden="true"
+              />
+              <input
+                type="text"
+                placeholder="Search properties..."
+                className="bg-transparent focus:outline-none ml-3 w-full text-sm text-slate-700 placeholder:text-slate-400"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                aria-label="Search properties"
+              />
+            </form>
+            <nav className="flex flex-col gap-1" aria-label="Mobile navigation">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                    location.pathname === link.to
+                      ? "text-estate-800 bg-estate-50"
+                      : "text-slate-600 hover:text-estate-700 hover:bg-slate-50"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

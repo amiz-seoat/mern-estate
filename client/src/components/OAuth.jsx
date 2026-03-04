@@ -4,6 +4,8 @@ import { useDispatch } from "react-redux";
 import { signInSuccess } from "../redux/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { FaGoogle } from "react-icons/fa";
+import Button from "./ui/Button";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -19,7 +21,6 @@ export default function OAuth() {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
 
-      // Force account picker every time
       provider.setCustomParameters({ prompt: "select_account" });
 
       const result = await signInWithPopup(auth, provider);
@@ -28,7 +29,7 @@ export default function OAuth() {
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // sends/stores the httpOnly cookie
+        credentials: "include",
         body: JSON.stringify({
           name: result.user.displayName,
           email: result.user.email,
@@ -54,18 +55,23 @@ export default function OAuth() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <button
-        onClick={handleGoogleClick}
-        disabled={loading}
-        type="button"
-        className="bg-red-700 text-white p-3 rounded-lg hover:opacity-95 uppercase disabled:opacity-70"
-      >
-        {loading ? "Signing in..." : "Continue with Google"}
-      </button>
-      {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-4 my-1">
+        <div className="flex-1 h-px bg-slate-200" />
+        <span className="text-sm text-slate-400 font-medium">or</span>
+        <div className="flex-1 h-px bg-slate-200" />
+      </div>
+
+      <Button onClick={handleGoogleClick} loading={loading} variant="google">
+        <FaGoogle className="h-4 w-4 text-red-500" />
+        <span>Continue with Google</span>
+      </Button>
+
+      {error && (
+        <p className="text-sm text-rose-500 text-center" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }
-
-

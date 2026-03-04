@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux'
-import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { FaEnvelope, FaLock } from 'react-icons/fa';
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../redux/user/userSlice';
 import OAuth from '../components/OAuth';
+import AuthLayout from '../components/ui/AuthLayout';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user)
+  const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({
@@ -20,7 +28,6 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Client-side validation
     if (!formData.email || !formData.password) {
       return dispatch(signInFailure('Email and password are required'));
     }
@@ -50,39 +57,56 @@ export default function SignIn() {
   };
 
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-
-        <input
+    <AuthLayout
+      title="Welcome back"
+      subtitle="Sign in to your account to continue your property search."
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Input
+          id="email"
           type="email"
-          placeholder='Email'
-          className='border p-3 rounded-lg'
-          id='email'
+          label="Email address"
+          placeholder="Enter your email"
+          icon={FaEnvelope}
           onChange={handleChange}
         />
-        <input
+        <Input
+          id="password"
           type="password"
-          placeholder='Password'
-          className='border p-3 rounded-lg'
-          id='password'
+          label="Password"
+          placeholder="Enter your password"
+          icon={FaLock}
           onChange={handleChange}
         />
-        <button
-          disabled={loading}
-          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
-        >
-          {loading ? 'Loading...' : 'Sign In'}
-        </button>
+
+        {error && (
+          <div
+            className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
+            role="alert"
+          >
+            <span className="text-rose-500 text-sm mt-0.5" aria-hidden="true">
+              ●
+            </span>
+            <p className="text-sm text-rose-600">{error}</p>
+          </div>
+        )}
+
+        <Button type="submit" loading={loading} className="mt-2">
+          Sign In
+        </Button>
+
         <OAuth />
       </form>
-      <div className='flex gap-2 mt-5'>
-        <p>Don't have an account?</p>
-        <Link to={'/sign-up'}>
-          <span className='text-blue-700'>Sign up</span>
+
+      <p className="text-center text-slate-500 mt-8 text-sm">
+        Don&apos;t have an account?{' '}
+        <Link
+          to="/sign-up"
+          className="text-estate-700 font-semibold hover:text-estate-600 transition-colors"
+        >
+          Sign up
         </Link>
-      </div>
-      {error && <p className='text-red-500 mt-5'>{error}</p>}
-    </div>
+      </p>
+    </AuthLayout>
   );
 }

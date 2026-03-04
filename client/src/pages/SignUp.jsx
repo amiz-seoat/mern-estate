@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
 import OAuth from '../components/OAuth';
+import AuthLayout from '../components/ui/AuthLayout';
+import Input from '../components/ui/Input';
+import Button from '../components/ui/Button';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
@@ -18,7 +22,6 @@ export default function SignUp() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Client-side validation
     if (!formData.username || !formData.email || !formData.password) {
       return setError('All fields are required');
     }
@@ -52,45 +55,64 @@ export default function SignUp() {
   };
 
   return (
-    <div className='p-3 max-w-lg mx-auto'>
-      <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-        <input
+    <AuthLayout
+      title="Create your account"
+      subtitle="Join thousands of happy homeowners and find your perfect property."
+    >
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <Input
+          id="username"
           type="text"
-          placeholder='Username'
-          className='border p-3 rounded-lg'
-          id='username'
+          label="Username"
+          placeholder="Enter your username"
+          icon={FaUser}
           onChange={handleChange}
         />
-        <input
+        <Input
+          id="email"
           type="email"
-          placeholder='Email'
-          className='border p-3 rounded-lg'
-          id='email'
+          label="Email address"
+          placeholder="Enter your email"
+          icon={FaEnvelope}
           onChange={handleChange}
         />
-        <input
+        <Input
+          id="password"
           type="password"
-          placeholder='Password'
-          className='border p-3 rounded-lg'
-          id='password'
+          label="Password"
+          placeholder="Create a password"
+          icon={FaLock}
           onChange={handleChange}
         />
-        <button
-          disabled={loading}
-          className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'
-        >
-          {loading ? 'Loading...' : 'Sign Up'}
-        </button>
+
+        {error && (
+          <div
+            className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
+            role="alert"
+          >
+            <span className="text-rose-500 text-sm mt-0.5" aria-hidden="true">
+              ●
+            </span>
+            <p className="text-sm text-rose-600">{error}</p>
+          </div>
+        )}
+
+        <Button type="submit" loading={loading} className="mt-2">
+          Create Account
+        </Button>
+
         <OAuth />
       </form>
-      <div className='flex gap-2 mt-5'>
-        <p>Have an account?</p>
-        <Link to={'/sign-in'}>
-          <span className='text-blue-700'>Sign in</span>
+
+      <p className="text-center text-slate-500 mt-8 text-sm">
+        Already have an account?{' '}
+        <Link
+          to="/sign-in"
+          className="text-estate-700 font-semibold hover:text-estate-600 transition-colors"
+        >
+          Sign in
         </Link>
-      </div>
-      {error && <p className='text-red-500 mt-5'>{error}</p>}
-    </div>
+      </p>
+    </AuthLayout>
   );
 }
