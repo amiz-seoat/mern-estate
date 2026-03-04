@@ -27,18 +27,19 @@ import {
   FaChevronDown,
   FaChevronUp,
   FaExclamationCircle,
-  FaCheckCircle,
 } from "react-icons/fa";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import toast from "react-hot-toast";
 
 export default function Profile() {
+  useDocumentTitle("My Profile");
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
   const [file, setFile] = useState(undefined);
   const [imageUrl, setImageUrl] = useState("");
   const [formData, setFormData] = useState({});
-  const [updateSuccess, setUpdateSuccess] = useState(false);
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
   const [listingsVisible, setListingsVisible] = useState(false);
@@ -113,10 +114,10 @@ export default function Profile() {
       }
 
       dispatch(updateUserSuccess(data));
-      setUpdateSuccess(true);
-      setTimeout(() => setUpdateSuccess(false), 3000);
+      toast.success("Profile updated successfully.");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
+      toast.error(error.message || "Failed to update profile.");
     }
   };
 
@@ -133,8 +134,10 @@ export default function Profile() {
         return;
       }
       dispatch(deleteUserSuccess(data));
+      toast.success("Account deleted.");
     } catch (error) {
       dispatch(deleteUserFailure(error.message));
+      toast.error(error.message || "Failed to delete account.");
     }
   };
 
@@ -148,8 +151,10 @@ export default function Profile() {
         return;
       }
       dispatch(signOutUserSuccess(data));
+      toast.success("Signed out successfully.");
     } catch (error) {
       dispatch(signOutUserFailure(error.message));
+      toast.error("Failed to sign out.");
     }
   };
 
@@ -190,15 +195,16 @@ export default function Profile() {
       setUserListings((prev) =>
         prev.filter((listing) => listing._id !== listingId)
       );
+      toast.success("Listing deleted.");
     } catch (error) {
-      console.log(error.message);
+      toast.error("Failed to delete listing.");
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-8 animate-fade-in-up">
       {/* Profile Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
         {/* Gradient Header */}
         <div className="h-28 sm:h-32 bg-gradient-to-r from-estate-900 via-estate-800 to-estate-600 relative">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(240,192,64,0.15),transparent_60%)]" />
@@ -216,7 +222,7 @@ export default function Profile() {
             />
             <img
               onClick={() => fileRef.current.click()}
-              className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl object-cover border-4 border-white shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
+              className="h-24 w-24 sm:h-28 sm:w-28 rounded-2xl object-cover border-4 border-white dark:border-slate-900 shadow-lg cursor-pointer hover:opacity-90 transition-opacity"
               src={imageUrl || currentUser.avatar}
               alt="Profile"
             />
@@ -233,10 +239,10 @@ export default function Profile() {
 
         {/* Form */}
         <div className="p-6 pt-4">
-          <h1 className="text-xl font-bold text-slate-800 mb-1">
+          <h1 className="text-xl font-bold text-slate-800 dark:text-white mb-1">
             Profile Settings
           </h1>
-          <p className="text-sm text-slate-500 mb-6">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
             Update your personal information and account details.
           </p>
 
@@ -268,30 +274,6 @@ export default function Profile() {
               onChange={handleChange}
             />
 
-            {/* Error Alert */}
-            {error && (
-              <div
-                className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
-                role="alert"
-              >
-                <FaExclamationCircle className="text-rose-500 h-4 w-4 mt-0.5 shrink-0" />
-                <p className="text-sm text-rose-600">{error}</p>
-              </div>
-            )}
-
-            {/* Success Alert */}
-            {updateSuccess && (
-              <div
-                className="bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 flex items-start gap-3"
-                role="status"
-              >
-                <FaCheckCircle className="text-emerald-500 h-4 w-4 mt-0.5 shrink-0" />
-                <p className="text-sm text-emerald-700">
-                  Profile updated successfully.
-                </p>
-              </div>
-            )}
-
             <Button type="submit" loading={loading} className="mt-1">
               Update Profile
             </Button>
@@ -300,7 +282,7 @@ export default function Profile() {
       </div>
 
       {/* Actions Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mt-6">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 mt-6">
         <Link
           to="/create-listing"
           className="flex items-center justify-center gap-2.5 w-full px-6 py-3.5 rounded-xl font-semibold text-sm tracking-wide bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white shadow-lg shadow-emerald-600/20 hover:shadow-xl transition-all duration-200"
@@ -309,17 +291,17 @@ export default function Profile() {
           Create New Listing
         </Link>
 
-        <div className="flex items-center justify-between mt-5 pt-5 border-t border-slate-100">
+        <div className="flex items-center justify-between mt-5 pt-5 border-t border-slate-100 dark:border-slate-800">
           <button
             onClick={handleDeleteUser}
-            className="text-sm text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-600 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <FaTrash className="h-3 w-3" />
             Delete account
           </button>
           <button
             onClick={handleSignOut}
-            className="text-sm text-slate-500 hover:text-rose-600 transition-colors flex items-center gap-1.5 cursor-pointer"
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-rose-600 transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <FaSignOutAlt className="h-3.5 w-3.5" />
             Sign out
@@ -331,7 +313,7 @@ export default function Profile() {
       <div className="mt-6">
         <button
           onClick={handleShowListings}
-          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-estate-700 hover:text-estate-600 bg-white border border-slate-200 shadow-sm hover:shadow transition-all cursor-pointer"
+          className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold text-estate-700 dark:text-estate-300 hover:text-estate-600 dark:hover:text-estate-200 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow transition-all cursor-pointer"
         >
           <FaHome className="h-3.5 w-3.5" />
           {listingsVisible ? "Hide My Listings" : "Show My Listings"}
@@ -344,7 +326,7 @@ export default function Profile() {
 
         {showListingsError && (
           <div
-            className="mt-3 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-center gap-2"
+            className="mt-3 bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-xl px-4 py-3 flex items-center gap-2"
             role="alert"
           >
             <FaExclamationCircle className="text-rose-500 h-4 w-4 shrink-0" />
@@ -356,13 +338,13 @@ export default function Profile() {
 
         {listingsVisible && userListings && userListings.length > 0 && (
           <div className="mt-4 space-y-3 animate-fade-in">
-            <h2 className="text-lg font-semibold text-slate-800">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
               Your Listings ({userListings.length})
             </h2>
             {userListings.map((listing) => (
               <div
                 key={listing._id}
-                className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 hover:shadow-sm transition-shadow"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex items-center gap-4 hover:shadow-sm transition-shadow"
               >
                 <Link
                   to={`/listing/${listing._id}`}
@@ -379,14 +361,14 @@ export default function Profile() {
                   to={`/listing/${listing._id}`}
                   className="flex-1 min-w-0"
                 >
-                  <p className="font-medium text-slate-800 truncate hover:text-estate-700 transition-colors">
+                  <p className="font-medium text-slate-800 dark:text-slate-100 truncate hover:text-estate-700 transition-colors">
                     {listing.name}
                   </p>
                 </Link>
                 <div className="flex items-center gap-1 shrink-0">
                   <Link
                     to={`/update-listing/${listing._id}`}
-                    className="p-2 rounded-lg text-slate-400 hover:text-estate-600 hover:bg-estate-50 transition-colors"
+                    className="p-2 rounded-lg text-slate-400 hover:text-estate-600 hover:bg-estate-50 dark:hover:bg-estate-900/30 transition-colors"
                     aria-label={`Edit ${listing.name}`}
                     title="Edit"
                   >
@@ -394,7 +376,7 @@ export default function Profile() {
                   </Link>
                   <button
                     onClick={() => handleListingDelete(listing._id)}
-                    className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                    className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors cursor-pointer"
                     aria-label={`Delete ${listing.name}`}
                     title="Delete"
                   >
@@ -407,9 +389,9 @@ export default function Profile() {
         )}
 
         {listingsVisible && userListings && userListings.length === 0 && (
-          <div className="mt-4 bg-white border border-slate-200 rounded-xl p-8 text-center animate-fade-in">
+          <div className="mt-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-8 text-center animate-fade-in">
             <FaHome className="h-10 w-10 text-slate-200 mx-auto mb-3" />
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-500 dark:text-slate-400 text-sm">
               You haven&apos;t created any listings yet.
             </p>
             <Link

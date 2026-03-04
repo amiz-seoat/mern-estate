@@ -11,8 +11,10 @@ import OAuth from '../components/OAuth';
 import AuthLayout from '../components/ui/AuthLayout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 export default function SignIn() {
+  useDocumentTitle('Sign In');
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
@@ -70,24 +72,34 @@ export default function SignIn() {
           icon={FaEnvelope}
           onChange={handleChange}
         />
-        <Input
-          id="password"
-          type="password"
-          label="Password"
-          placeholder="Enter your password"
-          icon={FaLock}
-          onChange={handleChange}
-        />
+        <div>
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="Enter your password"
+            icon={FaLock}
+            onChange={handleChange}
+          />
+          <div className="text-right mt-1.5">
+            <Link
+              to="/forgot-password"
+              className="text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-estate-700 dark:hover:text-estate-400 transition-colors"
+            >
+              Forgot password?
+            </Link>
+          </div>
+        </div>
 
         {error && (
           <div
-            className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
+            className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-xl px-4 py-3 flex items-start gap-3"
             role="alert"
           >
             <span className="text-rose-500 text-sm mt-0.5" aria-hidden="true">
               ●
             </span>
-            <p className="text-sm text-rose-600">{error}</p>
+            <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
           </div>
         )}
 
@@ -98,11 +110,11 @@ export default function SignIn() {
         <OAuth />
       </form>
 
-      <p className="text-center text-slate-500 mt-8 text-sm">
+      <p className="text-center text-slate-500 dark:text-slate-400 mt-8 text-sm">
         Don&apos;t have an account?{' '}
         <Link
           to="/sign-up"
-          className="text-estate-700 font-semibold hover:text-estate-600 transition-colors"
+          className="text-estate-700 dark:text-estate-400 font-semibold hover:text-estate-600 dark:hover:text-estate-300 transition-colors"
         >
           Sign up
         </Link>

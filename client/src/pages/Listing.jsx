@@ -16,6 +16,9 @@ import {
 } from "react-icons/fa";
 import Contact from "../components/Contact";
 import Button from "../components/ui/Button";
+import FavoriteButton from "../components/FavoriteButton";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import { ListingDetailSkeleton } from "../components/ui/Skeleton";
 
 const AMENITIES = [
   {
@@ -45,11 +48,12 @@ const AMENITIES = [
 export default function Listing() {
   SwiperCore.use([Navigation, Autoplay]);
   const currentUser = useSelector((state) => state.user?.currentUser);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [listing, setListing] = useState(null);
   const [contact, setContact] = useState(false);
   const [error, setError] = useState(false);
   const params = useParams();
+  useDocumentTitle(listing ? listing.name : "Property Details");
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -75,43 +79,17 @@ export default function Listing() {
   }, [params.listingId]);
 
   if (loading) {
-    return (
-      <div className="flex justify-center py-24">
-        <div className="flex flex-col items-center gap-3">
-          <svg
-            className="animate-spin h-8 w-8 text-estate-600"
-            viewBox="0 0 24 24"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            />
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-            />
-          </svg>
-          <p className="text-slate-500 text-sm">Loading property details...</p>
-        </div>
-      </div>
-    );
+    return <ListingDetailSkeleton />;
   }
 
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center py-24 px-4">
         <FaExclamationCircle className="h-12 w-12 text-slate-300 mb-4" />
-        <h2 className="text-lg font-semibold text-slate-600 mb-1">
+        <h2 className="text-lg font-semibold text-slate-600 dark:text-slate-300 mb-1">
           Something went wrong
         </h2>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm text-slate-400 dark:text-slate-500">
           We couldn&apos;t load this property. Please try again later.
         </p>
       </div>
@@ -146,7 +124,7 @@ export default function Listing() {
 
           {/* Property Info */}
           <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
               {/* Header */}
               <div className="p-6 sm:p-8">
                 {/* Badges */}
@@ -168,12 +146,15 @@ export default function Listing() {
                 </div>
 
                 {/* Name */}
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">
-                  {listing.name}
-                </h1>
+                <div className="flex items-start justify-between gap-3">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
+                    {listing.name}
+                  </h1>
+                  <FavoriteButton listingId={listing._id} size="lg" className="shrink-0 mt-1" />
+                </div>
 
                 {/* Address */}
-                <div className="flex items-center gap-2 mt-3 text-slate-500">
+                <div className="flex items-center gap-2 mt-3 text-slate-500 dark:text-slate-400">
                   <FaMapMarkerAlt
                     className="h-4 w-4 text-estate-500 shrink-0"
                     aria-hidden="true"
@@ -183,7 +164,7 @@ export default function Listing() {
 
                 {/* Price */}
                 <div className="mt-5 flex items-baseline gap-3">
-                  <p className="text-3xl sm:text-4xl font-bold text-estate-800">
+                  <p className="text-3xl sm:text-4xl font-bold text-estate-800 dark:text-estate-300">
                     $
                     {listing.offer
                       ? listing.discountPrice.toLocaleString("en-US")
@@ -211,8 +192,8 @@ export default function Listing() {
               </div>
 
               {/* Amenities Grid */}
-              <div className="border-t border-slate-100 px-6 sm:px-8 py-6">
-                <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">
+              <div className="border-t border-slate-100 dark:border-slate-800 px-6 sm:px-8 py-6">
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-4">
                   Property Details
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -224,8 +205,8 @@ export default function Listing() {
                         key={amenity.key}
                         className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
                           isPositive
-                            ? "border-estate-100 bg-estate-50/50"
-                            : "border-slate-100 bg-slate-50/50"
+                            ? "border-estate-100 bg-estate-50/50 dark:border-estate-800 dark:bg-estate-900/30"
+                            : "border-slate-100 bg-slate-50/50 dark:border-slate-700 dark:bg-slate-800/50"
                         }`}
                       >
                         <amenity.icon
@@ -236,7 +217,7 @@ export default function Listing() {
                         />
                         <span
                           className={`text-sm font-medium ${
-                            isPositive ? "text-estate-700" : "text-slate-500"
+                            isPositive ? "text-estate-700 dark:text-estate-300" : "text-slate-500 dark:text-slate-400"
                           }`}
                         >
                           {amenity.label(value)}
@@ -248,22 +229,22 @@ export default function Listing() {
               </div>
 
               {/* Description */}
-              <div className="border-t border-slate-100 px-6 sm:px-8 py-6">
-                <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-3">
+              <div className="border-t border-slate-100 dark:border-slate-800 px-6 sm:px-8 py-6">
+                <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-3">
                   Description
                 </h2>
-                <p className="text-slate-600 leading-relaxed">
+                <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
                   {listing.description}
                 </p>
               </div>
 
               {/* Contact Info */}
               {listing.contact && (
-                <div className="border-t border-slate-100 px-6 sm:px-8 py-6">
-                  <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-3">
+                <div className="border-t border-slate-100 dark:border-slate-800 px-6 sm:px-8 py-6">
+                  <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-100 uppercase tracking-wider mb-3">
                     Contact Information
                   </h2>
-                  <div className="flex items-center gap-2 text-slate-600">
+                  <div className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
                     <FaPhone
                       className="h-3.5 w-3.5 text-estate-500"
                       aria-hidden="true"
@@ -277,14 +258,14 @@ export default function Listing() {
               {currentUser &&
                 listing.userRef !== currentUser._id &&
                 !contact && (
-                  <div className="border-t border-slate-100 px-6 sm:px-8 py-6">
+                  <div className="border-t border-slate-100 dark:border-slate-800 px-6 sm:px-8 py-6">
                     <Button onClick={() => setContact(true)} fullWidth={false}>
                       Contact Landlord
                     </Button>
                   </div>
                 )}
               {contact && (
-                <div className="border-t border-slate-100 px-6 sm:px-8 py-6">
+                <div className="border-t border-slate-100 dark:border-slate-800 px-6 sm:px-8 py-6">
                   <Contact listing={listing} />
                 </div>
               )}

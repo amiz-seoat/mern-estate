@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ID } from "appwrite";
 import { storage } from "../../appwrite/appwriteconfig.js";
+import { compressImage } from "../../utils/imageUtils";
 import {
   FaHome,
   FaDollarSign,
@@ -42,7 +43,7 @@ const FEATURE_OPTIONS = [
 ];
 
 const inputClass =
-  "w-full border-2 border-slate-200 bg-slate-50/80 rounded-xl px-4 py-3 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-estate-500 focus:bg-white focus:ring-4 focus:ring-estate-50 transition-colors";
+  "w-full border-2 border-slate-200 dark:border-slate-700 bg-slate-50/80 dark:bg-slate-800/80 rounded-xl px-4 py-3 text-slate-800 dark:text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-estate-500 focus:bg-white dark:focus:bg-slate-800 focus:ring-4 focus:ring-estate-50 dark:focus:ring-estate-900/30 transition-colors";
 
 export default function ListingForm({
   title,
@@ -74,11 +75,12 @@ export default function ListingForm({
   };
 
   const storeImage = async (file) => {
+    const compressed = await compressImage(file);
     const fileId = ID.unique();
     const response = await storage.createFile(
       "67fcceb30033ff389be2",
       fileId,
-      file
+      compressed
     );
     return storage.getFileView("67fcceb30033ff389be2", response.$id);
   };
@@ -120,10 +122,10 @@ export default function ListingForm({
   return (
     <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 animate-fade-in-up">
       <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 tracking-tight">
+        <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white tracking-tight">
           {title}
         </h1>
-        <p className="text-slate-500 mt-1">
+        <p className="text-slate-500 dark:text-slate-400 mt-1">
           {subtitle || "Fill in the details below to list your property."}
         </p>
       </div>
@@ -135,8 +137,8 @@ export default function ListingForm({
         {/* Left Column — Details */}
         <div className="lg:col-span-3 space-y-6">
           {/* Property Info */}
-          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
               <FaHome className="text-estate-600 h-4 w-4" aria-hidden="true" />
               Property Details
             </h2>
@@ -144,7 +146,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="name"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Property Name
                 </label>
@@ -163,7 +165,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="description"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Description
                 </label>
@@ -179,7 +181,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="address"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Address
                 </label>
@@ -196,7 +198,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="contact"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Contact Info
                 </label>
@@ -214,13 +216,13 @@ export default function ListingForm({
           </section>
 
           {/* Type & Features */}
-          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-4">
+          <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
               Type & Features
             </h2>
 
             <div className="mb-5">
-              <p className="text-sm font-medium text-slate-700 mb-2">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Listing Type
               </p>
               <div className="flex gap-3">
@@ -230,8 +232,8 @@ export default function ListingForm({
                     htmlFor={t.id}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all text-sm font-medium ${
                       formData.type === t.id
-                        ? "border-estate-500 bg-estate-50 text-estate-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                        ? "border-estate-500 bg-estate-50 dark:bg-estate-900/30 text-estate-700 dark:text-estate-300"
+                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
                     }`}
                   >
                     <input
@@ -249,7 +251,7 @@ export default function ListingForm({
             </div>
 
             <div>
-              <p className="text-sm font-medium text-slate-700 mb-2">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Features
               </p>
               <div className="flex flex-wrap gap-3">
@@ -259,8 +261,8 @@ export default function ListingForm({
                     htmlFor={f.id}
                     className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 cursor-pointer transition-all text-sm font-medium ${
                       formData[f.id]
-                        ? "border-estate-500 bg-estate-50 text-estate-700"
-                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                        ? "border-estate-500 bg-estate-50 dark:bg-estate-900/30 text-estate-700 dark:text-estate-300"
+                        : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600"
                     }`}
                   >
                     <input
@@ -279,15 +281,15 @@ export default function ListingForm({
           </section>
 
           {/* Rooms & Pricing */}
-          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-4">
+          <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-4">
               Rooms & Pricing
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
                 <label
                   htmlFor="bedrooms"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Bedrooms
                 </label>
@@ -305,7 +307,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="bathrooms"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Bathrooms
                 </label>
@@ -323,7 +325,7 @@ export default function ListingForm({
               <div>
                 <label
                   htmlFor="regularPrice"
-                  className="text-sm font-medium text-slate-700 mb-1.5 block"
+                  className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                 >
                   Price {formData.type === "rent" ? "($/mo)" : "($)"}
                 </label>
@@ -341,7 +343,7 @@ export default function ListingForm({
                 <div>
                   <label
                     htmlFor="discountPrice"
-                    className="text-sm font-medium text-slate-700 mb-1.5 block"
+                    className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 block"
                   >
                     Discount {formData.type === "rent" ? "($/mo)" : "($)"}
                   </label>
@@ -362,16 +364,16 @@ export default function ListingForm({
 
         {/* Right Column — Images & Submit */}
         <div className="lg:col-span-2 space-y-6">
-          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h2 className="text-lg font-semibold text-slate-800 mb-1 flex items-center gap-2">
+          <section className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-1 flex items-center gap-2">
               <FaImage className="text-estate-600 h-4 w-4" aria-hidden="true" />
               Property Images
             </h2>
-            <p className="text-sm text-slate-500 mb-4">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">
               First image will be the cover (max 6)
             </p>
 
-            <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 mb-4 hover:border-estate-300 transition-colors">
+            <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-xl p-4 mb-4 hover:border-estate-300 dark:hover:border-estate-500 transition-colors">
               <input
                 type="file"
                 id="images"
@@ -385,7 +387,7 @@ export default function ListingForm({
               type="button"
               onClick={handleImageSubmit}
               disabled={uploading || files.length === 0}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-estate-200 text-estate-700 font-medium text-sm hover:bg-estate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-estate-200 dark:border-estate-700 text-estate-700 dark:text-estate-300 font-medium text-sm hover:bg-estate-50 dark:hover:bg-estate-900/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
             >
               <FaCloudUploadAlt className="h-4 w-4" />
               {uploading ? "Uploading..." : "Upload Images"}
@@ -406,7 +408,7 @@ export default function ListingForm({
                 {formData.imageUrls.map((url, index) => (
                   <div
                     key={url}
-                    className="flex items-center justify-between gap-3 p-3 border border-slate-200 rounded-xl bg-slate-50/50"
+                    className="flex items-center justify-between gap-3 p-3 border border-slate-200 dark:border-slate-700 rounded-xl bg-slate-50/50 dark:bg-slate-800/50"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <img
@@ -414,7 +416,7 @@ export default function ListingForm({
                         className="h-14 w-14 object-cover rounded-lg shrink-0"
                         alt={`Property image ${index + 1}`}
                       />
-                      <span className="text-xs text-slate-500 truncate">
+                      <span className="text-xs text-slate-500 dark:text-slate-400 truncate">
                         {index === 0 ? "Cover image" : `Image ${index + 1}`}
                       </span>
                     </div>
@@ -434,7 +436,7 @@ export default function ListingForm({
 
           {error && (
             <div
-              className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
+              className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-xl px-4 py-3 flex items-start gap-3"
               role="alert"
             >
               <FaExclamationCircle className="text-rose-500 h-4 w-4 mt-0.5 shrink-0" />

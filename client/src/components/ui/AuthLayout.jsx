@@ -1,6 +1,16 @@
 import { FaHome } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 
 export default function AuthLayout({ children, title, subtitle }) {
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/listing/stats")
+      .then((r) => r.json())
+      .then((d) => { if (d.totalListings !== undefined) setStats(d); })
+      .catch(() => {});
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-64px)] flex">
       {/* Left Panel — Branding */}
@@ -29,38 +39,38 @@ export default function AuthLayout({ children, title, subtitle }) {
 
           <div className="flex gap-8 mt-12 pt-8 border-t border-white/10">
             <div>
-              <div className="text-2xl font-bold text-gold-400">2,500+</div>
+              <div className="text-2xl font-bold text-gold-400">{stats ? stats.totalListings.toLocaleString() : "—"}</div>
               <div className="text-estate-300 text-sm mt-1">Properties</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-gold-400">1,200+</div>
+              <div className="text-2xl font-bold text-gold-400">{stats ? stats.totalUsers.toLocaleString() : "—"}</div>
               <div className="text-estate-300 text-sm mt-1">Happy Clients</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-gold-400">50+</div>
-              <div className="text-estate-300 text-sm mt-1">Expert Agents</div>
+              <div className="text-2xl font-bold text-gold-400">{stats ? stats.totalCities.toLocaleString() : "—"}</div>
+              <div className="text-estate-300 text-sm mt-1">Cities Covered</div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Panel — Form */}
-      <div className="w-full lg:w-7/12 flex items-center justify-center p-6 sm:p-12">
+      <div className="w-full lg:w-7/12 flex items-center justify-center p-6 sm:p-12 bg-white dark:bg-slate-900 transition-colors">
         <div className="w-full max-w-md animate-fade-in-up">
           {/* Mobile-only branding */}
           <div className="lg:hidden flex items-center justify-center gap-2.5 mb-10">
-            <div className="bg-estate-800 p-2 rounded-lg">
+            <div className="bg-estate-800 dark:bg-estate-700 p-2 rounded-lg">
               <FaHome className="h-5 w-5 text-gold-400" />
             </div>
-            <span className="text-xl font-bold text-estate-900 tracking-tight">
+            <span className="text-xl font-bold text-estate-900 dark:text-white tracking-tight">
               AmizEstate
             </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
             {title}
           </h1>
-          {subtitle && <p className="text-slate-500 mt-2">{subtitle}</p>}
+          {subtitle && <p className="text-slate-500 dark:text-slate-400 mt-2">{subtitle}</p>}
           <div className="mt-8">{children}</div>
         </div>
       </div>

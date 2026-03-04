@@ -1,7 +1,8 @@
 import Listing from "../models/listing.model.js";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
-import bcryptjs from 'bcryptjs'
+import { clearTokenCookie } from "../utils/cookie.js";
+import bcryptjs from "bcryptjs";
 
  export const test = (req, res)=>{
     res.json({
@@ -38,7 +39,7 @@ export const deleteUser = async (req, res, next)=>{
     if (req.user.id!==req.params.id) return next(errorHandler(401, 'You can only delete your own account'))
         try {
             await User.findByIdAndDelete(req.params.id)
-            res.clearCookie('access_token')
+            clearTokenCookie(res)
             res.status(200).json('User has been deleted!')
         } catch (error) {
             next(error)
@@ -57,6 +58,40 @@ export const getUserListings = async (req, res, next) => {
         return next(errorHandler(401,'You can only view your own listings!'))
     }
 }
+
+export const toggleFavorite = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { listingId } = req.params;
+    const user = await User.findById(userId);
+    if (!user) return next(errorHandler(404, "User not found."));
+
+    const index = user.favorites.indexOf(listingId);
+    if (index === -1) {
+      user.favorites.push(listingId);
+    } else {
+      user.favorites.splice(index, 1);
+    }
+    await user.save();
+
+    const { password, ...rest } = user._doc;
+    res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFavorites = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return next(errorHandler(404, "User not found."));
+
+    const listings = await Listing.find({ _id: { $in: user.favorites } });
+    res.status(200).json(listings);
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const getUser = async (req, res, next) => {
     try {

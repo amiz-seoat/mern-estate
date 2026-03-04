@@ -57,9 +57,9 @@ export default function OAuth() {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center gap-4 my-1">
-        <div className="flex-1 h-px bg-slate-200" />
+        <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
         <span className="text-sm text-slate-400 font-medium">or</span>
-        <div className="flex-1 h-px bg-slate-200" />
+        <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
       </div>
 
       <Button onClick={handleGoogleClick} loading={loading} variant="google">

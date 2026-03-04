@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaUser, FaEnvelope, FaLock } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaCheckCircle } from 'react-icons/fa';
 import OAuth from '../components/OAuth';
 import AuthLayout from '../components/ui/AuthLayout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
+import useDocumentTitle from '../hooks/useDocumentTitle';
 
 export default function SignUp() {
+  useDocumentTitle('Create Account');
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [signupSuccess, setSignupSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -47,12 +50,45 @@ export default function SignUp() {
 
       setLoading(false);
       setError(null);
-      navigate('/sign-in');
+      if (data.requiresVerification) {
+        setSignupSuccess(true);
+      } else {
+        navigate('/sign-in');
+      }
     } catch (error) {
       setLoading(false);
       setError(error.message);
     }
   };
+
+  if (signupSuccess) {
+    return (
+      <AuthLayout
+        title="Check your email"
+        subtitle="One more step to get started"
+      >
+        <div className="text-center py-4 animate-fade-in">
+          <div className="bg-emerald-50 dark:bg-emerald-950/30 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 border border-emerald-100 dark:border-emerald-800">
+            <FaCheckCircle className="h-7 w-7 text-emerald-500" />
+          </div>
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white mb-2">
+            Account created!
+          </h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+            We&apos;ve sent a verification link to{' '}
+            <strong className="text-slate-700 dark:text-slate-300">{formData.email}</strong>.
+            Please check your inbox and click the link to verify your account.
+          </p>
+          <Link
+            to="/sign-in"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-estate-800 hover:bg-estate-700 text-white font-semibold rounded-xl transition-all text-sm"
+          >
+            Go to Sign In
+          </Link>
+        </div>
+      </AuthLayout>
+    );
+  }
 
   return (
     <AuthLayout
@@ -87,13 +123,13 @@ export default function SignUp() {
 
         {error && (
           <div
-            className="bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 flex items-start gap-3"
+            className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 rounded-xl px-4 py-3 flex items-start gap-3"
             role="alert"
           >
             <span className="text-rose-500 text-sm mt-0.5" aria-hidden="true">
               ●
             </span>
-            <p className="text-sm text-rose-600">{error}</p>
+            <p className="text-sm text-rose-600 dark:text-rose-400">{error}</p>
           </div>
         )}
 
@@ -104,11 +140,11 @@ export default function SignUp() {
         <OAuth />
       </form>
 
-      <p className="text-center text-slate-500 mt-8 text-sm">
+      <p className="text-center text-slate-500 dark:text-slate-400 mt-8 text-sm">
         Already have an account?{' '}
         <Link
           to="/sign-in"
-          className="text-estate-700 font-semibold hover:text-estate-600 transition-colors"
+          className="text-estate-700 dark:text-estate-400 font-semibold hover:text-estate-600 dark:hover:text-estate-300 transition-colors"
         >
           Sign in
         </Link>

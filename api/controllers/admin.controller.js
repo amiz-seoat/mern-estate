@@ -4,8 +4,34 @@ import { errorHandler } from "../utils/error.js";
 
 export const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find().select("-password").sort({ createdAt: -1 });
-    res.status(200).json(users);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+    const search = req.query.search?.trim() || "";
+
+    const filter = search
+      ? {
+          $or: [
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const [users, total] = await Promise.all([
+      User.find(filter)
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      User.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      users,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
     next(error);
   }
@@ -26,8 +52,23 @@ export const deleteUserAdmin = async (req, res, next) => {
 
 export const getAllListingsAdmin = async (req, res, next) => {
   try {
-    const listings = await Listing.find().sort({ createdAt: -1 });
-    res.status(200).json(listings);
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 10));
+
+    const [listings, total] = await Promise.all([
+      Listing.find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      Listing.countDocuments(),
+    ]);
+
+    res.status(200).json({
+      listings,
+      total,
+      page,
+      pages: Math.ceil(total / limit),
+    });
   } catch (error) {
     next(error);
   }

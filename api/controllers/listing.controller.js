@@ -100,7 +100,24 @@ export const getListings = async (req, res, next) => {
   }
 };
 
-// Get a single listing by ID ✅ THIS WAS MISSING
+export const getPublicStats = async (req, res, next) => {
+  try {
+    const [totalListings, totalUsers, uniqueAddresses] = await Promise.all([
+      Listing.countDocuments(),
+      (await import("../models/user.model.js")).default.countDocuments(),
+      Listing.distinct("address"),
+    ]);
+
+    res.status(200).json({
+      totalListings,
+      totalUsers,
+      totalCities: uniqueAddresses.length,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getListing = async (req, res, next) => {
   try {
     const listing = await Listing.findById(req.params.id);

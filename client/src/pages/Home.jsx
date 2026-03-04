@@ -5,6 +5,11 @@ import SwiperCore from "swiper";
 import { Navigation, Autoplay } from "swiper/modules";
 import "swiper/css/bundle";
 import ListingItem from "../components/ListingItem";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import {
+  SwiperSkeleton,
+  ListingSectionSkeleton,
+} from "../components/ui/Skeleton";
 import {
   FaSearch,
   FaArrowRight,
@@ -14,18 +19,32 @@ import {
   FaShieldAlt,
 } from "react-icons/fa";
 
-const STATS = [
-  { icon: FaHome, value: "2,500+", label: "Properties Listed" },
-  { icon: FaBuilding, value: "150+", label: "Cities Covered" },
-  { icon: FaHandshake, value: "1,200+", label: "Happy Clients" },
-  { icon: FaShieldAlt, value: "99%", label: "Satisfaction Rate" },
-];
-
 export default function Home() {
+  useDocumentTitle("Find Your Dream Property");
   SwiperCore.use([Navigation, Autoplay]);
   const [offerListing, setOfferListing] = useState([]);
   const [rentListing, setRentListing] = useState([]);
   const [saleListing, setSaleListing] = useState([]);
+  const [listingsLoading, setListingsLoading] = useState(true);
+  const [platformStats, setPlatformStats] = useState(null);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/listing/stats");
+        const data = await res.json();
+        if (data.totalListings !== undefined) setPlatformStats(data);
+      } catch { /* silent */ }
+    };
+    fetchStats();
+  }, []);
+
+  const stats = [
+    { icon: FaHome, value: platformStats ? platformStats.totalListings.toLocaleString() : "—", label: "Properties Listed" },
+    { icon: FaBuilding, value: platformStats ? platformStats.totalCities.toLocaleString() : "—", label: "Cities Covered" },
+    { icon: FaHandshake, value: platformStats ? platformStats.totalUsers.toLocaleString() : "—", label: "Happy Clients" },
+    { icon: FaShieldAlt, value: "99%", label: "Satisfaction Rate" },
+  ];
 
   useEffect(() => {
     const fetchOfferListing = async () => {
@@ -55,6 +74,8 @@ export default function Home() {
         setSaleListing(data);
       } catch (err) {
         console.log(err);
+      } finally {
+        setListingsLoading(false);
       }
     };
     fetchOfferListing();
@@ -101,7 +122,7 @@ export default function Home() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mt-16 pt-10 border-t border-white/10">
-            {STATS.map((stat, i) => (
+            {stats.map((stat, i) => (
               <div key={i} className="text-center sm:text-left">
                 <stat.icon className="h-5 w-5 text-gold-400 mx-auto sm:mx-0 mb-2" />
                 <div className="text-2xl font-bold text-white">
@@ -117,7 +138,8 @@ export default function Home() {
       </section>
 
       {/* Featured Properties Swiper */}
-      {offerListing && offerListing.length > 0 && (
+      {listingsLoading && <SwiperSkeleton />}
+      {!listingsLoading && offerListing && offerListing.length > 0 && (
         <section className="relative -mt-6 z-20 px-4 sm:px-6">
           <div className="max-w-6xl mx-auto">
             <Swiper
@@ -152,7 +174,14 @@ export default function Home() {
 
       {/* Listing Sections */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 space-y-16">
-        {offerListing && offerListing.length > 0 && (
+        {listingsLoading && (
+          <>
+            <ListingSectionSkeleton />
+            <ListingSectionSkeleton />
+          </>
+        )}
+
+        {!listingsLoading && offerListing && offerListing.length > 0 && (
           <ListingSection
             title="Recent Offers"
             subtitle="Exclusive deals you won't want to miss"
@@ -161,7 +190,7 @@ export default function Home() {
           />
         )}
 
-        {rentListing && rentListing.length > 0 && (
+        {!listingsLoading && rentListing && rentListing.length > 0 && (
           <ListingSection
             title="Places for Rent"
             subtitle="Find your next rental home"
@@ -170,7 +199,7 @@ export default function Home() {
           />
         )}
 
-        {saleListing && saleListing.length > 0 && (
+        {!listingsLoading && saleListing && saleListing.length > 0 && (
           <ListingSection
             title="Places for Sale"
             subtitle="Properties available for purchase"
@@ -188,27 +217,27 @@ function ListingSection({ title, subtitle, linkTo, listings }) {
     <section className="animate-fade-in">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white">
             {title}
           </h2>
-          <p className="text-slate-500 mt-1">{subtitle}</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>
         </div>
         <Link
           to={linkTo}
-          className="hidden sm:inline-flex items-center gap-1.5 text-estate-700 hover:text-estate-600 font-semibold text-sm transition-colors group"
+          className="hidden sm:inline-flex items-center gap-1.5 text-estate-700 dark:text-estate-300 hover:text-estate-600 dark:hover:text-estate-200 font-semibold text-sm transition-colors group"
         >
           View all
           <FaArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
         </Link>
       </div>
-      <div className="flex flex-wrap gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {listings.map((listing) => (
           <ListingItem listing={listing} key={listing._id} />
         ))}
       </div>
       <Link
         to={linkTo}
-        className="sm:hidden inline-flex items-center gap-1.5 mt-6 text-estate-700 hover:text-estate-600 font-semibold text-sm transition-colors"
+        className="sm:hidden inline-flex items-center gap-1.5 mt-6 text-estate-700 dark:text-estate-300 hover:text-estate-600 dark:hover:text-estate-200 font-semibold text-sm transition-colors"
       >
         View all
         <FaArrowRight className="h-3 w-3" />

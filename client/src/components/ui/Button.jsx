@@ -1,10 +1,10 @@
 const variants = {
   primary:
-    'bg-estate-800 hover:bg-estate-700 active:bg-estate-900 text-white shadow-lg shadow-estate-900/20 hover:shadow-xl',
+    'bg-estate-800 hover:bg-estate-700 active:bg-estate-900 text-white shadow-lg shadow-estate-900/20 hover:shadow-xl dark:bg-estate-700 dark:hover:bg-estate-600 dark:shadow-estate-900/40',
   secondary:
-    'bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300',
+    'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600',
   google:
-    'bg-white border-2 border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300 shadow-sm',
+    'bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-300 dark:hover:border-slate-600 shadow-sm',
   danger:
     'bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white shadow-lg shadow-rose-600/20',
 };

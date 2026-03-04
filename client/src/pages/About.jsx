@@ -8,6 +8,7 @@ import {
   FaSearch,
   FaArrowRight,
 } from "react-icons/fa";
+import useDocumentTitle from "../hooks/useDocumentTitle";
 
 const VALUES = [
   {
@@ -31,6 +32,7 @@ const VALUES = [
 ];
 
 export default function About() {
+  useDocumentTitle("About Us");
   return (
     <div>
       {/* Hero */}
@@ -57,18 +59,18 @@ export default function About() {
 
       {/* Mission */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 sm:p-10">
-          <h2 className="text-2xl font-bold text-slate-800 mb-4">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-8 sm:p-10">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">
             Our Mission
           </h2>
-          <p className="text-slate-600 leading-relaxed mb-4">
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
             At AmizEstate, we help clients find the perfect home or property
             investment with confidence. Our team brings deep expertise in the
             local market and a commitment to exceptional service. Whether
             you&apos;re buying, selling, or renting, we guide you every step of
             the way.
           </p>
-          <p className="text-slate-600 leading-relaxed">
+          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
             We provide a user-friendly platform where buyers, sellers, and
             renters can easily connect, explore listings, and make informed
             property decisions. We aim to simplify the real estate process
@@ -79,25 +81,25 @@ export default function About() {
 
       {/* Values */}
       <section className="max-w-4xl mx-auto px-4 sm:px-6 pb-16">
-        <h2 className="text-2xl font-bold text-slate-800 mb-8 text-center">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-8 text-center">
           What We Stand For
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {VALUES.map((value, i) => (
             <div
               key={i}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+              className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm p-6 hover:shadow-md hover:-translate-y-1 transition-all duration-300"
             >
-              <div className="bg-estate-50 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
+              <div className="bg-estate-50 dark:bg-estate-900/30 w-12 h-12 rounded-xl flex items-center justify-center mb-4">
                 <value.icon
                   className="h-5 w-5 text-estate-700"
                   aria-hidden="true"
                 />
               </div>
-              <h3 className="text-lg font-semibold text-slate-800 mb-2">
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">
                 {value.title}
               </h3>
-              <p className="text-sm text-slate-500 leading-relaxed">
+              <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
                 {value.description}
               </p>
             </div>
@@ -106,12 +108,12 @@ export default function About() {
       </section>
 
       {/* CTA */}
-      <section className="bg-estate-50 border-t border-estate-100">
+      <section className="bg-estate-50 dark:bg-estate-950 border-t border-estate-100 dark:border-estate-800">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16 text-center">
-          <h2 className="text-2xl font-bold text-slate-800 mb-3">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-white mb-3">
             Ready to Find Your Dream Property?
           </h2>
-          <p className="text-slate-500 mb-8 max-w-lg mx-auto">
+          <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-lg mx-auto">
             Browse thousands of listings and connect with trusted agents today.
           </p>
           <Link

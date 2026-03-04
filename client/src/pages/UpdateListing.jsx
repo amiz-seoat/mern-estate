@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import ListingForm from "../components/ui/ListingForm";
+import useDocumentTitle from "../hooks/useDocumentTitle";
+import toast from "react-hot-toast";
 
 export default function UpdateListing() {
+  useDocumentTitle("Update Listing");
   const { currentUser } = useSelector((state) => state.user);
   const [initialData, setInitialData] = useState(null);
   const [error, setError] = useState(false);
@@ -29,10 +32,14 @@ export default function UpdateListing() {
   }, [params.listingId]);
 
   const handleSubmit = async (formData) => {
-    if (formData.imageUrls.length < 1)
+    if (formData.imageUrls.length < 1) {
+      toast.error("You must upload at least one image");
       return setError("You must upload at least one image");
-    if (+formData.regularPrice < +formData.discountPrice)
+    }
+    if (+formData.regularPrice < +formData.discountPrice) {
+      toast.error("Discount price must be lower than regular price");
       return setError("Discount price must be lower than regular price");
+    }
 
     try {
       setLoading(true);
@@ -51,12 +58,15 @@ export default function UpdateListing() {
       setLoading(false);
       if (data.success === false) {
         setError(data.message || "Something went wrong.");
+        toast.error(data.message || "Something went wrong.");
         return;
       }
 
+      toast.success("Listing updated successfully!");
       navigate(`/listing/${data._id}`);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to update listing.");
       setLoading(false);
     }
   };
