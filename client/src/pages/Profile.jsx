@@ -50,6 +50,12 @@ export default function Profile() {
     }
   }, [file]);
 
+  useEffect(() => {
+    if (imageUrl) {
+      setFormData((prev) => ({ ...prev, avatar: imageUrl }));
+    }
+  }, [imageUrl]);
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     if (selectedFile) {
@@ -119,6 +125,7 @@ export default function Profile() {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -153,7 +160,9 @@ export default function Profile() {
     }
     try {
       setShowListingsError(false);
-      const res = await fetch(`api/user/listings/${currentUser._id}`);
+      const res = await fetch(`/api/user/listings/${currentUser._id}`, {
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -171,6 +180,7 @@ export default function Profile() {
     try {
       const res = await fetch(`/api/listing/delete/${listingId}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
