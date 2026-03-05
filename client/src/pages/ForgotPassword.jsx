@@ -5,6 +5,7 @@ import AuthLayout from "../components/ui/AuthLayout";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { apiUrl } from "../utils/api";
 
 export default function ForgotPassword() {
   useDocumentTitle("Forgot Password");
@@ -18,9 +19,10 @@ export default function ForgotPassword() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/auth/forgot-password", {
+      const res = await fetch(apiUrl("/api/auth/forgot-password"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email }),
       });
       const data = await res.json();

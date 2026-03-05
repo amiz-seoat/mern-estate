@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { FaEnvelope, FaPaperPlane } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Button from "./ui/Button";
+import { apiUrl } from "../utils/api";
 
 export default function Contact({ listing }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -14,7 +15,7 @@ export default function Contact({ listing }) {
   useEffect(() => {
     const fetchLandLord = async () => {
       try {
-        const res = await fetch(`/api/user/${listing.userRef}`);
+        const res = await fetch(apiUrl(`/api/user/${listing.userRef}`), { credentials: "include" });
         const data = await res.json();
         setLandLord(data);
       } catch (error) {
@@ -32,7 +33,7 @@ export default function Contact({ listing }) {
 
     setSending(true);
     try {
-      const res = await fetch("/api/message/send", {
+      const res = await fetch(apiUrl("/api/message/send"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

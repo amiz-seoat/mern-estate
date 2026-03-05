@@ -68,6 +68,8 @@ app.use("/api/listing", listingRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/message", messageRouter);
 
+app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
 // --- Global error handler ---
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
@@ -79,6 +81,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(3000, () => {
-  console.log("server is running on port 3000!");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`server is running on port ${PORT}!`);
 });

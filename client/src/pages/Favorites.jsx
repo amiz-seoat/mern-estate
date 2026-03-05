@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { FaHeart, FaSearch } from "react-icons/fa";
 import ListingItem from "../components/ListingItem";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { apiUrl } from "../utils/api";
 
 export default function Favorites() {
   useDocumentTitle("My Favorites");
@@ -13,7 +14,7 @@ export default function Favorites() {
   useEffect(() => {
     const fetchFavorites = async () => {
       try {
-        const res = await fetch("/api/user/favorites", {
+        const res = await fetch(apiUrl("/api/user/favorites"), {
           credentials: "include",
         });
         const data = await res.json();

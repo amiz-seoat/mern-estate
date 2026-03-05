@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import toast from "react-hot-toast";
+import { apiUrl } from "../utils/api";
 import Pagination from "../components/ui/Pagination";
 import {
   FaUsers,
@@ -95,7 +96,7 @@ export default function AdminDashboard() {
   const [allUsers, setAllUsers] = useState([]);
 
   const fetchStats = async () => {
-    const res = await fetch("/api/admin/stats", { credentials: "include" });
+    const res = await fetch(apiUrl("/api/admin/stats"), { credentials: "include" });
     const data = await res.json();
     if (data.success === false) throw new Error(data.message);
     setStats(data);
@@ -109,7 +110,7 @@ export default function AdminDashboard() {
         limit: String(ITEMS_PER_PAGE),
         ...(search && { search }),
       });
-      const res = await fetch(`/api/admin/users?${params}`, { credentials: "include" });
+      const res = await fetch(apiUrl(`/api/admin/users?${params}`), { credentials: "include" });
       const data = await res.json();
       if (data.success === false) throw new Error(data.message);
       setUsers(data.users);
@@ -125,7 +126,7 @@ export default function AdminDashboard() {
 
   const fetchAllUsersForMapping = async () => {
     try {
-      const res = await fetch("/api/admin/users?limit=50&page=1", { credentials: "include" });
+      const res = await fetch(apiUrl("/api/admin/users?limit=50&page=1"), { credentials: "include" });
       const data = await res.json();
       if (data.users) setAllUsers(data.users);
     } catch { /* best effort */ }
@@ -138,7 +139,7 @@ export default function AdminDashboard() {
         page: String(page),
         limit: String(ITEMS_PER_PAGE),
       });
-      const res = await fetch(`/api/admin/listings?${params}`, { credentials: "include" });
+      const res = await fetch(apiUrl(`/api/admin/listings?${params}`), { credentials: "include" });
       const data = await res.json();
       if (data.success === false) throw new Error(data.message);
       setListings(data.listings);
@@ -183,7 +184,7 @@ export default function AdminDashboard() {
     const confirmed = window.confirm("Delete this user and their listings?");
     if (!confirmed) return;
     try {
-      const res = await fetch(`/api/admin/users/${userId}`, {
+      const res = await fetch(apiUrl(`/api/admin/users/${userId}`), {
         method: "DELETE",
         credentials: "include",
       });
@@ -201,7 +202,7 @@ export default function AdminDashboard() {
     const confirmed = window.confirm("Delete this listing?");
     if (!confirmed) return;
     try {
-      const res = await fetch(`/api/admin/listings/${listingId}`, {
+      const res = await fetch(apiUrl(`/api/admin/listings/${listingId}`), {
         method: "DELETE",
         credentials: "include",
       });

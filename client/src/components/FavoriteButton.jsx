@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { updateUserSuccess } from "../redux/user/userSlice";
 import toast from "react-hot-toast";
+import { apiUrl } from "../utils/api";
 
 export default function FavoriteButton({ listingId, className = "", size = "md" }) {
   const { currentUser } = useSelector((state) => state.user);
@@ -21,7 +22,7 @@ export default function FavoriteButton({ listingId, className = "", size = "md" 
     setToggling(true);
 
     try {
-      const res = await fetch(`/api/user/favorites/${listingId}`, {
+      const res = await fetch(apiUrl(`/api/user/favorites/${listingId}`), {
         method: "POST",
         credentials: "include",
       });

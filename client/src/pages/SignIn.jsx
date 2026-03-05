@@ -12,6 +12,7 @@ import AuthLayout from '../components/ui/AuthLayout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { apiUrl } from '../utils/api';
 
 export default function SignIn() {
   useDocumentTitle('Sign In');
@@ -36,11 +37,12 @@ export default function SignIn() {
 
     try {
       dispatch(signInStart());
-      const res = await fetch('/api/auth/signin', {
+      const res = await fetch(apiUrl('/api/auth/signin'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 

@@ -5,6 +5,7 @@ import AuthLayout from "../components/ui/AuthLayout";
 import Input from "../components/ui/Input";
 import Button from "../components/ui/Button";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { apiUrl } from "../utils/api";
 
 export default function ResetPassword() {
   useDocumentTitle("Reset Password");
@@ -51,9 +52,10 @@ export default function ResetPassword() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch("/api/auth/reset-password", {
+      const res = await fetch(apiUrl("/api/auth/reset-password"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ token, password }),
       });
       const data = await res.json();

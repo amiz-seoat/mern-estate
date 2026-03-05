@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
 import Button from "./ui/Button";
+import { apiUrl } from "../utils/api";
 
 export default function OAuth() {
   const dispatch = useDispatch();
@@ -24,7 +25,7 @@ export default function OAuth() {
       provider.setCustomParameters({ prompt: "select_account" });
 
       const result = await signInWithPopup(auth, provider);
-      const res = await fetch("/api/auth/google", {
+      const res = await fetch(apiUrl("/api/auth/google"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

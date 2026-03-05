@@ -6,6 +6,7 @@ import AuthLayout from '../components/ui/AuthLayout';
 import Input from '../components/ui/Input';
 import Button from '../components/ui/Button';
 import useDocumentTitle from '../hooks/useDocumentTitle';
+import { apiUrl } from '../utils/api';
 
 export default function SignUp() {
   useDocumentTitle('Create Account');
@@ -32,11 +33,12 @@ export default function SignUp() {
     try {
       setLoading(true);
       setError(null);
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch(apiUrl('/api/auth/signup'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(formData),
       });
 

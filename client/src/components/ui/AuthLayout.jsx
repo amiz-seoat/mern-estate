@@ -1,11 +1,12 @@
 import { FaHome } from 'react-icons/fa';
 import { useState, useEffect } from 'react';
+import { apiUrl } from '../../utils/api';
 
 export default function AuthLayout({ children, title, subtitle }) {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch("/api/listing/stats")
+    fetch(apiUrl("/api/listing/stats"), { credentials: "include" })
       .then((r) => r.json())
       .then((d) => { if (d.totalListings !== undefined) setStats(d); })
       .catch(() => {});

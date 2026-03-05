@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { FaCheckCircle, FaExclamationCircle, FaEnvelope } from "react-icons/fa";
 import useDocumentTitle from "../hooks/useDocumentTitle";
+import { apiUrl } from "../utils/api";
 
 export default function VerifyEmail() {
   useDocumentTitle("Verify Email");
@@ -23,7 +24,7 @@ export default function VerifyEmail() {
 
     const verify = async () => {
       try {
-        const res = await fetch(`/api/auth/verify-email?token=${token}`);
+        const res = await fetch(apiUrl(`/api/auth/verify-email?token=${token}`), { credentials: "include" });
         const data = await res.json();
         if (data.success === false) {
           setStatus("error");
@@ -47,9 +48,10 @@ export default function VerifyEmail() {
     try {
       setResending(true);
       setResendMsg("");
-      const res = await fetch("/api/auth/resend-verification", {
+      const res = await fetch(apiUrl("/api/auth/resend-verification"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ email: resendEmail }),
       });
       const data = await res.json();

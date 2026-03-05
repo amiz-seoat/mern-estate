@@ -17,6 +17,7 @@ import ListingItem from "../components/ListingItem";
 import Button from "../components/ui/Button";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { SearchResultsSkeleton } from "../components/ui/Skeleton";
+import { apiUrl } from "../utils/api";
 
 const TYPE_OPTIONS = [
   { id: "all", label: "All Types", icon: FaHome },
@@ -74,7 +75,7 @@ export default function Search() {
     const fetchListings = async () => {
       setLoading(true);
       setShowAll(false);
-      const res = await fetch(`/api/listing/get?${urlParams}`);
+      const res = await fetch(apiUrl(`/api/listing/get?${urlParams}`), { credentials: "include" });
       const data = await res.json();
       setListings(data);
       setHasMore(data.length > 8);

@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import ListingForm from "../components/ui/ListingForm";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import toast from "react-hot-toast";
+import { apiUrl } from "../utils/api";
 
 export default function UpdateListing() {
   useDocumentTitle("Update Listing");
@@ -18,7 +19,7 @@ export default function UpdateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.listingId;
-      const res = await fetch(`/api/listing/get/${listingId}`);
+      const res = await fetch(apiUrl(`/api/listing/get/${listingId}`), { credentials: "include" });
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
@@ -44,11 +45,12 @@ export default function UpdateListing() {
     try {
       setLoading(true);
       setError(false);
-      const res = await fetch(`/api/listing/update/${params.listingId}`, {
+      const res = await fetch(apiUrl(`/api/listing/update/${params.listingId}`), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify({
           ...formData,
           userRef: currentUser._id,

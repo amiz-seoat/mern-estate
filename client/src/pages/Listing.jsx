@@ -19,6 +19,7 @@ import Button from "../components/ui/Button";
 import FavoriteButton from "../components/FavoriteButton";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import { ListingDetailSkeleton } from "../components/ui/Skeleton";
+import { apiUrl } from "../utils/api";
 
 const AMENITIES = [
   {
@@ -59,7 +60,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`/api/listing/get/${params.listingId}`);
+        const res = await fetch(apiUrl(`/api/listing/get/${params.listingId}`), { credentials: "include" });
         const data = await res.json();
         if (data.success === false) {
           setError(true);

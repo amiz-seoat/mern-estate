@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ListingForm from "../components/ui/ListingForm";
 import useDocumentTitle from "../hooks/useDocumentTitle";
 import toast from "react-hot-toast";
+import { apiUrl } from "../utils/api";
 
 export default function CreateListing() {
   useDocumentTitle("Create Listing");
@@ -26,7 +27,7 @@ export default function CreateListing() {
       setLoading(true);
       setError(false);
 
-      const res = await fetch("/api/listing/create", {
+      const res = await fetch(apiUrl("/api/listing/create"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
